@@ -1,5 +1,4 @@
 name: Pint
-run-name: Pint
 
 on:
   push:
