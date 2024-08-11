@@ -1,4 +1,4 @@
-name: Pint
+name: Auto Pint
 
 on:
   push:
@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  pint-and-commit:
+  auto-pint:
     runs-on: ubuntu-latest
 
     permissions:
@@ -23,12 +23,12 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
 
-      - name: Auto Pint
+      - name: Run Pint
         uses: aglipanci/laravel-pint-action@2.4
         with:
           verboseMode: true # -vオプションの有無
 
-      - name: Auto Commit
+      - name: Commit
         uses: stefanzweifel/git-auto-commit-action@v5.0.1
         with:
           commit_message: 🎨 auto pint
