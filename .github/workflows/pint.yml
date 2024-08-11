@@ -1,4 +1,5 @@
 name: Pint
+run-name: Pint
 
 on:
   push:
@@ -22,7 +23,6 @@ jobs:
         uses: aglipanci/laravel-pint-action@2.4
         with:
           verboseMode: true # -vオプションの有無
-          onlyDirty: true # --dirtyオプションの有無
 
       - name: Auto Commit
         uses: stefanzweifel/git-auto-commit-action@v5.0.1
