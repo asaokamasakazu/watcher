@@ -1,0 +1,13 @@
+name: Auto Assign
+
+on:
+  pull_request:
+    types: [opened]
+
+jobs:
+  auto-assing:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Assign Author to PR
+        uses: technote-space/assign-author@v1
