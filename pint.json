@@ -1,5 +1,5 @@
 {
-    "preset": "psr12",
+    "preset": "laravel",
     "rules": {
         "set_type_to_cast": true,
         "array_syntax": {
