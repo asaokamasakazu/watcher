@@ -24,7 +24,7 @@ jobs:
       - name: Auto Pint
         uses: aglipanci/laravel-pint-action@2.4
         with:
-          verboseMode: true # -vオプションの有無
+          verboseMode: true
 
       - name: Auto Commit
         uses: stefanzweifel/git-auto-commit-action@v5.0.1
