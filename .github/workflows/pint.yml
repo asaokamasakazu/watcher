@@ -6,6 +6,8 @@ on:
       - '**.php'
     branches-ignore:
       - 'main'
+      - 'staging'
+      - 'develop'
   workflow_dispatch:
 
 jobs:
