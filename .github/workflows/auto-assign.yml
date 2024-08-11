@@ -5,7 +5,7 @@ on:
     types: [opened]
 
 jobs:
-  auto-assing:
+  auto-assign:
     runs-on: ubuntu-latest
 
     steps:
