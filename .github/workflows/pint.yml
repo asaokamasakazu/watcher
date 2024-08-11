@@ -1,0 +1,30 @@
+name: pint
+
+on:
+  pull_request:
+    paths:
+      - '**.php'
+    branches-ignore:
+      - 'main'
+  workflow_dispatch:
+
+jobs:
+  pint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Auto Pint
+        uses: aglipanci/laravel-pint-action@2.4
+        with:
+          verboseMode: true # -vオプションの有無
+          onlyDirty: true # --dirtyオプションの有無
+
+      - name: Auto Commit
+        uses: stefanzweifel/git-auto-commit-action@v5.0.1
+        with:
+          commit_message: 🎨 auto pint
