@@ -24,3 +24,4 @@ jobs:
           GH_REPO: ${{ github.repository }}
           NUMBER: ${{ github.event.number }}
           LABELS: draft
+
