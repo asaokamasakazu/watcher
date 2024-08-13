@@ -1,0 +1,28 @@
+# Directory Patterns
+server:
+  - changed-files:
+    - any-glob-to-any-file:
+      - app/**
+      - config/**
+      - database/**
+      - lang/**
+      - routes/**
+      - tests/**
+      - composer.json
+front:
+  - changed-files:
+    - any-glob-to-any-file:
+      - resources/**
+      - package.json
+
+# Branch Patterns
+feat:
+  - head-branch:
+    - '^feature/'
+    - '^feat/'
+fix:
+  - head-branch:
+    - '^fix/'
+release:
+  - head-branch:
+    - '^release/'
