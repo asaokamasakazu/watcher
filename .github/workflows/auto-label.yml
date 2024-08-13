@@ -19,7 +19,7 @@ jobs:
           configuration-path: .github/configs/labeler.yml
           sync-labels: true
 
-      - name: Add or Delete Draft Label
+      - name: Add or Remove Draft Label
         run: gh pr edit $NUMBER $OPTION $LABELS
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
