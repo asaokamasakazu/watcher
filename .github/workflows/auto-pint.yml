@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - '**.php'
+      - '!**.blade.php'
     branches-ignore:
       - 'main'
       - 'staging'
