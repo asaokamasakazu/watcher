@@ -10,6 +10,10 @@ jobs:
   auto-assign:
     runs-on: ubuntu-latest
 
+    permissions:
+      issues: write
+      pull-requests: write
+
     steps:
       - name: Assign Author
         uses: technote-space/assign-author@v1
