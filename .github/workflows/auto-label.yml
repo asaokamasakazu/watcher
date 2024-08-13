@@ -33,5 +33,4 @@ jobs:
         run: gh pr edit $NUMBER $OPTION $LABEL_NAME
         env:
           NUMBER: ${{ github.event.number }}
-          # OPTION: ${{ github.event.pull_request.draft == true && '--add-label' || '--remove-label' }}
-          OPTION: ${{ (contains(toLowerCase(github.event.pull_request.title), 'wip') || contains(toLowerCase(github.event.pull_request.title), 'work in progress') || contains(github.event.pull_request.title, '🚧')) && '--add-label' || '--remove-label' }}
+          OPTION: ${{ github.event.pull_request.draft == true && '--add-label' || '--remove-label' }}
