@@ -1,6 +1,8 @@
 name: Auto Assign
 
 on:
+  issues:
+    types: [opened]
   pull_request:
     types: [opened]
 
@@ -9,5 +11,5 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Assign Author to PR
+      - name: Assign Author
         uses: technote-space/assign-author@v1
