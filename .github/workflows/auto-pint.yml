@@ -28,6 +28,8 @@ jobs:
         uses: aglipanci/laravel-pint-action@2.4
         with:
           verboseMode: true
+          # ./vendor/bin/pint --versionを実行してcomposer.lockのpintのバージョンに合わせる
+          # pintVersion: 1.14.0
 
       - name: Commit
         uses: stefanzweifel/git-auto-commit-action@v5.0.1
