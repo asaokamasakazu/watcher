@@ -26,6 +26,7 @@ jobs:
           sync-labels: true
 
       - name: Create Draft Label
+        continue-on-error: true
         run: gh label create $LABEL_NAME --color $LABEL_COLOR
 
       - name: Add or Remove Draft Label
