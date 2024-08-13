@@ -21,7 +21,7 @@ jobs:
 
       - name: Add or Delete Draft Label
         run: |
-         gh label create $LABELS EDEDED
+         gh label create $LABELS --color EDEDED
          gh pr edit $NUMBER $OPTION $LABELS
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
