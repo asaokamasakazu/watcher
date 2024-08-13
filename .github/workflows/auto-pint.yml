@@ -6,9 +6,9 @@ on:
       - '**.php'
       - '!**.blade.php'
     branches-ignore:
-      - 'main'
-      - 'staging'
-      - 'develop'
+      - main
+      - staging
+      - develop
   workflow_dispatch:
 
 jobs:
