@@ -27,3 +27,4 @@ jobs:
           NUMBER: ${{ github.event.number }}
           OPTION: ${{ github.event.pull_request.draft == true && '--add-label' || '--remove-label' }}
           LABELS: draft
+
