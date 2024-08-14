@@ -1,5 +1,4 @@
-🚀 {リリースブランチ名}
+🚀 <%= ENV['BRANCH_NAME'] %>
 <% pull_requests.each do |pr| -%>
 - #<%=  pr.number %> <%= pr.mention %>
-- <%= pr %>
 <% end -%>
