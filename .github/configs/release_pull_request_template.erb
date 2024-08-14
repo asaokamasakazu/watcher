@@ -1,27 +1,4 @@
 🚀 {リリースブランチ名}
-
-<% server_prs = pull_requests.select { |pr| pr.labels.include?('server') } %>
-<% if server_prs.any? %>
-## Server PRs
-<% server_prs.each do |pr| -%>
+<% pull_requests.each do |pr| -%>
 - #<%=  pr.number %> <%= pr.mention %>
 <% end -%>
-<% end %>
-
-<% front_prs = pull_requests.select { |pr| pr.labels.include?('front') } %>
-<% if front_prs.any? %>
-## Front PRs
-<% front_prs.each do |pr| -%>
-- #<%=  pr.number %> <%= pr.mention %>
-<% end -%>
-<% end %>
-
-<% other_prs = pull_requests.select { |pr| !pr.labels.include?('server') && !pr.labels.include?('front') } %>
-<% if other_prs.any? %>
-## Other PRs
-<% other_prs.each do |pr| -%>
-- #<%=  pr.number %> <%= pr.mention %>
-<% end -%>
-<% end %>
-
-最終更新：<%= Time.now.strftime('%Y-%m-%d %H:%M') %>
