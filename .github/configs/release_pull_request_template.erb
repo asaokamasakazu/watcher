@@ -1,8 +1,4 @@
 🚀 {リリースブランチ名}
-
-最終更新：<%= Time.now.strftime('%Y-%m-%d %H:%M') %>
-
-## マージされたPR
 <% pull_requests.each do |pr| -%>
 - #<%=  pr.number %> <%= pr.mention %>
 <% end -%>
