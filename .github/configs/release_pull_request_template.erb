@@ -6,7 +6,7 @@
 <% if server_prs.any? %>
 ## Server PRs
 <% server_prs.each do |pr| -%>
-- #<%=  pr.number %> <%= pr.mention %>
+- #<%=  pr.number %> <%= pr.author %>
 <% end -%>
 <% end %>
 
@@ -22,6 +22,6 @@
 <% if other_prs.any? %>
 ## Other PRs
 <% other_prs.each do |pr| -%>
-- #<%=  pr.number %> <%= pr.mention %>
+- #<%=  pr.number %> <%= pr.author %>
 <% end -%>
 <% end %>
