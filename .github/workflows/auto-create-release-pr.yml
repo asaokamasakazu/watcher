@@ -12,17 +12,9 @@ jobs:
     permissions:
       pull-requests: write
 
-#    env:
-#      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#      GH_REPO: ${{ github.repository }}
-#      LABEL_NAME: draft
-#      LABEL_COLOR: EDEDED
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-#        with:
-#          ref: ${{ github.head_ref }}
 
       - name: Set Up Ruby
         uses: actions/setup-ruby@v1
@@ -33,13 +25,15 @@ jobs:
         id: vars
         run: echo "::set-output name=branch_name::${GITHUB_REF#refs/heads/}"
 
-      - run: gem install --no-document git-pr-release
+      - name: Install git-pr-release
+        run: gem install --no-document git-pr-release
 
-      - run: git-pr-release
+      - name: Run git-pr-release
+        run: git-pr-release
         env:
           GIT_PR_RELEASE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GIT_PR_RELEASE_BRANCH_PRODUCTION: main
           GIT_PR_RELEASE_BRANCH_STAGING: ${{ steps.vars.outputs.branch_name }}
-#          GIT_PR_RELEASE_LABELS: release
+          GIT_PR_RELEASE_LABELS: release
           GIT_PR_RELEASE_TEMPLATE: .github/configs/release_pull_request_template.erb
           TZ: Asia/Tokyo
