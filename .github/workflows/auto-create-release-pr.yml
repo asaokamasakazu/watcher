@@ -1,0 +1,45 @@
+name: Auto Create Release PR
+
+on:
+  push:
+    branches:
+      - release/**
+
+jobs:
+  auto-create-release-pr:
+    runs-on: ubuntu-latest
+
+    permissions:
+      pull-requests: write
+
+#    env:
+#      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#      GH_REPO: ${{ github.repository }}
+#      LABEL_NAME: draft
+#      LABEL_COLOR: EDEDED
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+#        with:
+#          ref: ${{ github.head_ref }}
+
+      - name: Set Up Ruby
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: 3.1
+
+      - name: Set Up Branch Name
+        id: vars
+        run: echo "::set-output name=branch_name::${GITHUB_REF#refs/heads/}"
+
+      - run: gem install --no-document git-pr-release
+
+      - run: git-pr-release
+        env:
+          GIT_PR_RELEASE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GIT_PR_RELEASE_BRANCH_PRODUCTION: main
+          GIT_PR_RELEASE_BRANCH_STAGING: ${{ steps.vars.outputs.branch_name }}
+#          GIT_PR_RELEASE_LABELS: release
+          GIT_PR_RELEASE_TEMPLATE: .github/configs/release_pull_request_template.erb
+          TZ: Asia/Tokyo
