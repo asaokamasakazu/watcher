@@ -29,20 +29,26 @@ jobs:
             echo "is_changed=true" >> $GITHUB_OUTPUT
           fi
 
+      - &check_if_changed
+        if: steps.check_file_changed.outputs.is_changed == 'true'
+
       - name: Set Up Ruby
+        <<: *check_if_changed
         uses: actions/setup-ruby@v1
         with:
           ruby-version: 3.1
 
       - name: Set Up Branch Name
+        <<: *check_if_changed
         id: set_up_branch_name
         run: echo "branch_name=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
 
       - name: Install git-pr-release
+        <<: *check_if_changed
         run: gem install --no-document git-pr-release
 
       - name: Run git-pr-release
-        if: steps.check_file_changed.outputs.is_changed == 'true'
+        <<: *check_if_changed
         run: git-pr-release
         env:
           GIT_PR_RELEASE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
