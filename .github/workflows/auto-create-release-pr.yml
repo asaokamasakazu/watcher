@@ -64,7 +64,7 @@ jobs:
         run: gem install --no-document git-pr-release
 
       - name: Run git-pr-release
-        if: steps.check_file_changed.outputs.is_changed == 'true'
+        if: steps.check_file_changed.outputs.is_changed == 'false'
         run: git-pr-release
         env:
           GIT_PR_RELEASE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
