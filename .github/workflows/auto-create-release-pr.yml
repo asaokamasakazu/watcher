@@ -25,9 +25,12 @@ jobs:
             echo "is_changed=true" >> $GITHUB_OUTPUT
           fi
 
+    outputs:
+      is_changed: ${{ steps.check_diff.outputs.is_changed }}
+
   auto-create-release-pr:
     needs: check-file-changed
-    if: ${{ needs.check-file-changed.outputs.is_changed == 'true' }}
+    if: ${{ needs.check-file-changed.outputs.is_changed == 'false' }}
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
