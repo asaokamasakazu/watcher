@@ -24,11 +24,11 @@ jobs:
             echo "Changes detected."
             echo "is_changed=true" >> $GITHUB_OUTPUT
           fi
+          cat $GITHUB_OUTPUT  # デバッグ用: GITHUB_OUTPUTの内容を出力
 
   auto-create-release-pr:
     needs: check-file-changed
-#    if: ${{ needs.check-file-changed.outputs.is_changed == 'true' }}
-    if: needs.vars.outputs.is_changed == 'true'
+    if: ${{ needs.check-file-changed.outputs.is_changed == 'true' }}
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
