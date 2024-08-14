@@ -6,16 +6,32 @@ on:
       - release/**
 
 jobs:
-  auto-create-release-pr:
+  check-file-changed:
     runs-on: ubuntu-latest
-
-    permissions:
-      pull-requests: write
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Check File Changed
+        id: vars
+        run: |
+          git fetch origin
+          DIFF_FILES=$(git diff --name-only HEAD^ HEAD)
+          if [ -z "$DIFF_FILES" ]; then
+            echo "No changes detected."
+            echo "::set-output name=is_changed::false"
+          else
+            echo "Changes detected."
+            echo "::set-output name=is_changed::true"
+          fi
+
+  auto-create-release-pr:
+    needs: check-file-changed
+    if: ${{ needs.check-file-changed.outputs.is_changed == 'true' }}
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
       - name: Set Up Ruby
         uses: actions/setup-ruby@v1
         with:
