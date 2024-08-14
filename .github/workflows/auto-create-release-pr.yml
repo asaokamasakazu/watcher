@@ -30,7 +30,7 @@ jobs:
 
   auto-create-release-pr:
     needs: check-file-changed
-    if: ${{ needs.check-file-changed.outputs.is_changed == 'false' }}
+    if: ${{ needs.check-file-changed.outputs.is_changed == 'true' }}
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
