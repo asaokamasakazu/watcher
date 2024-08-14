@@ -6,34 +6,12 @@ on:
       - release/**
 
 jobs:
-#  check-file-changed:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v4
-#
-#      - name: Check File Changed
-#        id: check_diff
-#        run: |
-#          git fetch origin
-#          DIFF_FILES=$(git diff --name-only origin/main HEAD)
-#          if [ -z "$DIFF_FILES" ]; then
-#            echo "No changes detected."
-#            echo "is_changed=false" >> $GITHUB_OUTPUT
-#          else
-#            echo "Changes detected."
-#            echo "is_changed=true" >> $GITHUB_OUTPUT
-#          fi
-#
-#    outputs:
-#      is_changed: ${{ steps.check_diff.outputs.is_changed }}
-
   auto-create-release-pr:
-#    needs: check-file-changed
-#    if: ${{ needs.check-file-changed.outputs.is_changed == 'true' }}
     runs-on: ubuntu-latest
+
     permissions:
       pull-requests: write
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
