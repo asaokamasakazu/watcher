@@ -1,4 +1,4 @@
-name: Auto Create Release PR
+name: Auto PR Release
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - release/**
 
 jobs:
-  auto-create-release-pr:
+  auto-pr-release:
     runs-on: ubuntu-latest
 
     permissions:
@@ -52,5 +52,5 @@ jobs:
           GIT_PR_RELEASE_BRANCH_PRODUCTION: main
           GIT_PR_RELEASE_BRANCH_STAGING: ${{ steps.set_up_branch_name.outputs.branch_name }}
           GIT_PR_RELEASE_LABELS: release
-          GIT_PR_RELEASE_TEMPLATE: .github/configs/release_pull_request_template.erb
+          GIT_PR_RELEASE_TEMPLATE: .github/configs/pr-release-template.erb
           TZ: Asia/Tokyo
