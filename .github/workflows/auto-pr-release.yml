@@ -23,38 +23,32 @@ jobs:
           DIFF_FILES=$(git diff --name-only origin/main HEAD)
           if [ -z "$DIFF_FILES" ]; then
             echo "No changes detected."
-            echo "is_changed=false" >> $GITHUB_OUTPUT
+            echo "IS_CHANGED=false" >> $GITHUB_OUTPUT
           else
             echo "Changes detected."
-            echo "is_changed=true" >> $GITHUB_OUTPUT
+            echo "IS_CHANGED=true" >> $GITHUB_OUTPUT
           fi
 
       - name: Set Up Ruby
-        if: steps.check-file-changed.outputs.is_changed == 'true'
+        if: steps.check-file-changed.outputs.IS_CHANGED == 'true'
         uses: actions/setup-ruby@v1
         with:
           ruby-version: 3.1
 
       - name: Set Up Branch Name
-        if: steps.check-file-changed.outputs.is_changed == 'true'
-#        id: set_up_branch_name
-#        run: echo "branch_name=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
-#        run: |
-#          echo "branch_name=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
-#          echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+        if: steps.check-file-changed.outputs.IS_CHANGED == 'true'
         run: echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
 
       - name: Install git-pr-release
-        if: steps.check-file-changed.outputs.is_changed == 'true'
+        if: steps.check-file-changed.outputs.IS_CHANGED == 'true'
         run: gem install --no-document git-pr-release
 
       - name: Run git-pr-release
-        if: steps.check-file-changed.outputs.is_changed == 'true'
+        if: steps.check-file-changed.outputs.IS_CHANGED == 'true'
         run: git-pr-release
         env:
           GIT_PR_RELEASE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GIT_PR_RELEASE_BRANCH_PRODUCTION: main
-#          GIT_PR_RELEASE_BRANCH_STAGING: ${{ steps.set_up_branch_name.outputs.branch_name }}
           GIT_PR_RELEASE_BRANCH_STAGING: ${{ env.BRANCH_NAME }}
           GIT_PR_RELEASE_LABELS: release
           GIT_PR_RELEASE_TEMPLATE: .github/configs/pr-release-template.erb
