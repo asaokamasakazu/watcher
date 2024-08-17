@@ -6,7 +6,7 @@ on:
       - '**.php'
       - '!**.blade.php'
     branches-ignore:
-#      - main
+      - main
       - staging
       - develop
   workflow_dispatch:
