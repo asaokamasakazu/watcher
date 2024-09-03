@@ -17,7 +17,7 @@ jobs:
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GH_REPO: ${{ github.repository }}
-      LABEL_NAME: draft
+      LABEL_NAME: 🚧 draft
       LABEL_COLOR: EDEDED
 
     steps:
