@@ -1,5 +1,5 @@
 # Directory Patterns
-server:
+':elephant: server':
   - changed-files:
     - any-glob-to-any-file:
       - app/**
@@ -9,20 +9,20 @@ server:
       - routes/**
       - tests/**
       - composer.json
-front:
+':fish: front':
   - changed-files:
     - any-glob-to-any-file:
       - resources/**
       - package.json
 
 # Branch Patterns
-feat:
+':gem: feat':
   - head-branch:
     - '^feature/'
     - '^feat/'
-fix:
+':bug: fix':
   - head-branch:
     - '^fix/'
-release:
+':rocket: release':
   - head-branch:
     - '^release/'
