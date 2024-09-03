@@ -17,7 +17,7 @@ jobs:
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GH_REPO: ${{ github.repository }}
-      LABEL_NAME: 🚧 draft
+      LABEL_NAME: "🚧 draft"
       LABEL_COLOR: EDEDED
 
     steps:
@@ -29,10 +29,10 @@ jobs:
 
       - name: Create Draft Label
         continue-on-error: true
-        run: gh label create $LABEL_NAME --color $LABEL_COLOR
+        run: gh label create "$LABEL_NAME" --color $LABEL_COLOR
 
       - name: Add or Remove Draft Label
-        run: gh pr edit $NUMBER $OPTION $LABEL_NAME
+        run: gh pr edit $NUMBER $OPTION "$LABEL_NAME"
         env:
           NUMBER: ${{ github.event.number }}
           OPTION: ${{ github.event.pull_request.draft == true && '--add-label' || '--remove-label' }}
