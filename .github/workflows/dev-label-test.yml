@@ -1,0 +1,54 @@
+name: Dev Label Test
+
+on:
+  push:
+    branches:
+      - test1
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  dev-label-test:
+    environment:
+      name: test1
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+#      - name: Add Label to PR
+#        run: gh pr edit $NUMBER --add-label dev反映済
+#        env:
+#          NUMBER: ${{ github.event.number }}
+
+
+
+
+#      - name: Get branch name from the last commit
+#        run: echo "BRANCH_NAME=$(git log -1 --pretty=%B | grep -oP '(?<=from ).*(?= into)')" >> $GITHUB_ENV
+#
+#      - name: Add Label to PR
+#        if: github.event.commits[0].message contains 'from ${{ env.BRANCH_NAME }}'
+#        uses: actions-ecosystem/action-add-labels@v1
+#        with:
+#          labels: dev反映済
+#          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+
+
+
+      - name: Find PR Number
+        id: find_pr_number
+        run: |
+          PR_NUMBER=$(gh pr list --head test1 --json number --jq '.[0].number')
+          echo "PR_NUMBER=${PR_NUMBER}" >> $GITHUB_ENV
+
+      - name: Add label to PR
+        if: ${{ env.PR_NUMBER != '' }}
+        run: gh pr edit ${{ env.PR_NUMBER }} --add-label "dev反映済"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
