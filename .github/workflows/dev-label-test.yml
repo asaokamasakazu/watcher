@@ -45,10 +45,15 @@ jobs:
 
 
 
-      - name: Find PR Number
-        id: find_pr_number
+      - name: Get Branch Name
         run: |
-          PR_NUMBER=$(gh pr list --head test1 --json number --jq '.[0].number')
+          BRANCH_NAME=$(git log -1 --pretty=%B | grep -oP '(?<=from ).*(?= into)')
+          echo "BRANCH_NAME=${BRANCH_NAME}" >> $GITHUB_ENV
+
+      - name: Find PR Number
+#        id: find_pr_number
+        run: |
+          PR_NUMBER=$(gh pr list --head ${{ env.BRANCH_NAME }} --json number --jq '.[0].number')
           echo "PR_NUMBER=${PR_NUMBER}" >> $GITHUB_ENV
 
       - name: Add label to PR
