@@ -16,6 +16,10 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#      GH_TOKEN: ${{ github.token }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -50,5 +54,5 @@ jobs:
       - name: Add label to PR
         if: ${{ env.PR_NUMBER != '' }}
         run: gh pr edit ${{ env.PR_NUMBER }} --add-label "dev反映済"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
