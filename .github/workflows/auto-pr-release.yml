@@ -53,6 +53,6 @@ jobs:
           GIT_PR_RELEASE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GIT_PR_RELEASE_BRANCH_PRODUCTION: main
           GIT_PR_RELEASE_BRANCH_STAGING: ${{ env.BRANCH_NAME }}
-          GIT_PR_RELEASE_LABELS: 🚀 release
+          GIT_PR_RELEASE_LABELS: ":rocket: release"
           GIT_PR_RELEASE_TEMPLATE: .github/configs/pr-release-template.erb
           TZ: Asia/Tokyo
