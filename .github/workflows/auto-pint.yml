@@ -37,45 +37,27 @@ jobs:
         with:
           commit_message: 🎨 Auto Pint
 
-      - name: Call Playbook
-        if: success()
-        uses: ./.github/actions/playbook
-        with:
-          message: |
-            # ${{ github.job }} が失敗しました
-
-            ## 影響
-            - 何が影響を受けるか
-
-            ## 調査方法
-            - Jobの落ちてるステップのエラーログを確認してください
-
-            ## 修正方法
-            - どのように対応するか
-
-            ## 修正後の確認方法
-            - 修正後にどのように確認するか
+#      - name: Call Playbook
+#        if: success()
+#        uses: ./.github/actions/playbook
+#        with:
+#          message: |
+#            # ${{ github.job }} が失敗しました
+#
+#            ## 影響
+#            - 何が影響を受けるか
+#
+#            ## 調査方法
+#            - Jobの落ちてるステップのエラーログを確認してください
+#
+#            ## 修正方法
+#            - どのように対応するか
+#
+#            ## 修正後の確認方法
+#            - 修正後にどのように確認するか
 
     outputs:
-      commit_done: ${{ steps.commit.outcome }}  # Commitの結果をoutputsに設定
-
-  call-playbook-1:
-    uses: ./.github/workflows/playbook.yml
-    with:
-      message: |
-        # ${{ github.job }} が失敗しました
-
-        ## 影響
-        - 何が影響を受けるか
-
-        ## 調査方法
-        - Jobの落ちてるステップのエラーログを確認してください
-
-        ## 修正方法
-        - どのように対応するか
-
-        ## 修正後の確認方法
-        - 修正後にどのように確認するか
+      commit_done: ${{ steps.commit.outcome }}
 
   call-playbook-2:
     needs: auto-pint
