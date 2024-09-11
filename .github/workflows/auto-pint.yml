@@ -38,7 +38,7 @@ jobs:
 
       - name: Call Playbook
         if: success()
-        uses: ./.github/workflows/playbook.yml
+        uses: ./.github/actions/playbook
         with:
           message: |
             # ${{ github.job }} が失敗しました
@@ -54,3 +54,16 @@ jobs:
 
             ## 修正後の確認方法
             - 修正後にどのように確認するか
+
+  call-playbook-1:
+    uses: ./.github/workflows/playbook.yml
+
+  call-playbook-2:
+    uses: ./.github/workflows/playbook.yml
+    needs: auto-pint
+    if: steps.commit.outcome == 'success'
+
+  call-playbook-3:
+    uses: ./.github/workflows/playbook.yml
+    needs: auto-pint
+    if: steps.commit.outcome != 'success'
