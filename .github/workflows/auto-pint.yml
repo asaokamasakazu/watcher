@@ -28,7 +28,6 @@ jobs:
         uses: aglipanci/laravel-pint-action@2.4
         with:
           verboseMode: true
-          testMode: true # todo 消す
           # ./vendor/bin/pint --versionを実行してcomposer.lockのpintのバージョンに合わせる
           # pintVersion: 1.14.0
 
@@ -39,11 +38,11 @@ jobs:
           commit_message: 🎨 Auto Pint
 
       - name: Call Playbook
-        if: failure()
+        if: success()
         uses: ./.github/actions/playbook
         with:
           message: |
-            ## ${{ github.job }} が失敗しました
+            ## :warning: ${{ github.job }} が失敗しました
 
             ### 原因
             - hoge
