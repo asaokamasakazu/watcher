@@ -20,3 +20,4 @@ runs:
           console.log(`Hello ${message}`);
           core.summary.addRaw(message, true);
           core.summary.write();
+          core.setFailed(message);
