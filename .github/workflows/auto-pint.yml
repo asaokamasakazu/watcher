@@ -61,13 +61,58 @@ jobs:
 
   call-playbook-1:
     uses: ./.github/workflows/playbook.yml
+    with:
+      message: |
+        # ${{ github.job }} が失敗しました
+
+        ## 影響
+        - 何が影響を受けるか
+
+        ## 調査方法
+        - Jobの落ちてるステップのエラーログを確認してください
+
+        ## 修正方法
+        - どのように対応するか
+
+        ## 修正後の確認方法
+        - 修正後にどのように確認するか
 
   call-playbook-2:
     needs: auto-pint
     if: needs.auto-pint.outputs.commit_done == 'success'
     uses: ./.github/workflows/playbook.yml
+    with:
+      message: |
+        # ${{ github.job }} が失敗しました
+
+        ## 影響
+        - 何が影響を受けるか
+
+        ## 調査方法
+        - Jobの落ちてるステップのエラーログを確認してください
+
+        ## 修正方法
+        - どのように対応するか
+
+        ## 修正後の確認方法
+        - 修正後にどのように確認するか
 
   call-playbook-3:
     needs: auto-pint
     if: needs.auto-pint.outputs.commit_done != 'success'
     uses: ./.github/workflows/playbook.yml
+    with:
+      message: |
+        # ${{ github.job }} が失敗しました
+
+        ## 影響
+        - 何が影響を受けるか
+
+        ## 調査方法
+        - Jobの落ちてるステップのエラーログを確認してください
+
+        ## 修正方法
+        - どのように対応するか
+
+        ## 修正後の確認方法
+        - 修正後にどのように確認するか
