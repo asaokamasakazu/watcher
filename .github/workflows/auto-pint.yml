@@ -32,6 +32,7 @@ jobs:
           # pintVersion: 1.14.0
 
       - name: Commit
+        id: commit
         uses: stefanzweifel/git-auto-commit-action@v5.0.1
         with:
           commit_message: 🎨 Auto Pint
@@ -59,11 +60,11 @@ jobs:
     uses: ./.github/workflows/playbook.yml
 
   call-playbook-2:
-    uses: ./.github/workflows/playbook.yml
     needs: auto-pint
     if: steps.commit.outcome == 'success'
+    uses: ./.github/workflows/playbook.yml
 
   call-playbook-3:
-    uses: ./.github/workflows/playbook.yml
     needs: auto-pint
     if: steps.commit.outcome != 'success'
+    uses: ./.github/workflows/playbook.yml
