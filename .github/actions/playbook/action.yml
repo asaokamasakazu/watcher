@@ -17,7 +17,7 @@ runs:
       with:
         script: |
 #          const message = process.env.INPUT_MESSAGE;
-          const message = 'hogehoge';
+          const message = hogehoge;
           core.summary.addRaw(message, true);
           core.summary.write();
           core.setFailed(message);
