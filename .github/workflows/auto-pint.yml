@@ -56,15 +56,18 @@ jobs:
             ## 修正後の確認方法
             - 修正後にどのように確認するか
 
+    outputs:
+      commit_done: ${{ steps.commit.outcome }}  # Commitの結果をoutputsに設定
+
   call-playbook-1:
     uses: ./.github/workflows/playbook.yml
 
   call-playbook-2:
     needs: auto-pint
-    if: steps.commit.outcome == 'success'
+    if: needs.auto-pint.outputs.commit_done == 'success'
     uses: ./.github/workflows/playbook.yml
 
   call-playbook-3:
     needs: auto-pint
-    if: steps.commit.outcome != 'success'
+    if: needs.auto-pint.outputs.commit_done != 'success'
     uses: ./.github/workflows/playbook.yml
