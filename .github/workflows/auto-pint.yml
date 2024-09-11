@@ -38,7 +38,7 @@ jobs:
 
       - name: Call Playbook
         if: success()
-        uses: ./.github/workflows/playbook
+        uses: ./.github/workflows/playbook.yml
         with:
           message: |
             # ${{ github.job }} が失敗しました
