@@ -21,7 +21,8 @@ jobs:
           INPUT_MESSAGE: ${{ inputs.message }}
         with:
           script: |
-            const message = process.env.INPUT_MESSAGE;
-            core.summary.addRaw(message, true);
-            core.summary.write();
-            core.setFailed(message);
+            console.log('aaaaa')
+#            const message = process.env.INPUT_MESSAGE;
+#            core.summary.addRaw(message, true);
+#            core.summary.write();
+#            core.setFailed(message);
