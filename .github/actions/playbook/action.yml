@@ -18,3 +18,4 @@ runs:
         script: |
           const message = process.env.INPUT_MESSAGE;
           console.log(`Hello ${message}`);
+          core.summary.addRaw(message, true);
