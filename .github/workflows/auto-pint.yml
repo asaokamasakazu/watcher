@@ -35,3 +35,22 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v5.0.1
         with:
           commit_message: 🎨 Auto Pint
+
+      - name: Call Playbook
+        if: success()
+        uses: ./.github/workflows/playbook
+        with:
+          message: |
+            # ${{ github.job }} が失敗しました
+
+            ## 影響
+            - 何が影響を受けるか
+
+            ## 調査方法
+            - Jobの落ちてるステップのエラーログを確認してください
+
+            ## 修正方法
+            - どのように対応するか
+
+            ## 修正後の確認方法
+            - 修正後にどのように確認するか
