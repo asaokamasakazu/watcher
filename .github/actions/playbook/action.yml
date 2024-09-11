@@ -16,7 +16,8 @@ runs:
         INPUT_MESSAGE: ${{ inputs.message }}
       with:
         script: |
-          const message = process.env.INPUT_MESSAGE;
+#          const message = process.env.INPUT_MESSAGE;
+          const message = 'hogehoge';
           core.summary.addRaw(message, true);
           core.summary.write();
           core.setFailed(message);
