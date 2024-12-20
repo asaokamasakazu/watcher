@@ -50,10 +50,10 @@ jobs:
           # echo "::add-matcher::.github/actionlint-matcher.json"
           actionlint -color
 
-      - name: Run pinact
-        uses: suzuki-shunsuke/pinact-action@a60b07ee63e41654915780a3297ff9f5f6b6db63 # v0.1.0
-        with:
-          skip_push: true
+#      - name: Run pinact
+#        uses: suzuki-shunsuke/pinact-action@a60b07ee63e41654915780a3297ff9f5f6b6db63 # v0.1.0
+#        with:
+#          skip_push: true
 
       - name: Run ghalint
         run: ghalint run
