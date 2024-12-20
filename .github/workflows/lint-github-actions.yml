@@ -1,0 +1,61 @@
+name: Lint GitHub Actions
+
+on:
+  push:
+    paths:
+      - '.github/actions/**/*.yml'
+      - '.github/workflows/**/*.yml'
+  workflow_dispatch:
+
+jobs:
+  lint-github-actions:
+    runs-on: ubuntu-latest
+
+    timeout-minutes: 10
+
+    permissions:
+      contents: read # actions/checkout
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          sparse-checkout: |
+            .github
+
+      - name: Install actionlint
+        uses: jaxxstorm/action-install-gh-release@25d5e2dd555cd74f1fab9ac1e6ea117acde2c0c4 # v1.12.0
+        with:
+          repo: rhysd/actionlint
+          cache: enable
+
+      # pinact-action doesn't installs pinact itself
+      - name: Install pinact
+        uses: jaxxstorm/action-install-gh-release@25d5e2dd555cd74f1fab9ac1e6ea117acde2c0c4 # v1.12.0
+        with:
+          repo: suzuki-shunsuke/pinact
+          cache: enable
+
+      - name: Install ghalint
+        id: install-ghalint
+        uses: jaxxstorm/action-install-gh-release@25d5e2dd555cd74f1fab9ac1e6ea117acde2c0c4 # v1.12.0
+        with:
+          repo: suzuki-shunsuke/ghalint
+          cache: enable
+
+      - name: Run actionlint
+        run: |
+          # 以下URLのファイルを .github/ ディレクトリに配置することで actionlint の結果を GitHub のコード行にインライン表示できるようになる
+          # https://github.com/rhysd/actionlint/blob/main/.github/actionlint-matcher.json
+          # echo "::add-matcher::.github/actionlint-matcher.json"
+          actionlint -color
+
+      - name: Run pinact
+        uses: suzuki-shunsuke/pinact-action@a60b07ee63e41654915780a3297ff9f5f6b6db63 # v0.1.0
+        with:
+          skip_push: true
+
+      - name: Run ghalint
+        run: ghalint run
+        env:
+          GHALINT_LOG_COLOR: always
