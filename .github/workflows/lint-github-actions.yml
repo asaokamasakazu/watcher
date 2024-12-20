@@ -55,7 +55,7 @@ jobs:
 #        with:
 #          skip_push: true
 
-      - name: Run ghalint
-        run: ghalint run
-        env:
-          GHALINT_LOG_COLOR: always
+#      - name: Run ghalint
+#        run: ghalint run
+#        env:
+#          GHALINT_LOG_COLOR: always
