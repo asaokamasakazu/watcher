@@ -14,6 +14,26 @@
     - any-glob-to-any-file:
       - resources/**
       - package.json
+':electric_plug: infrastructure':
+  - changed-files:
+    - any-glob-to-any-file:
+      - terraform/**
+':octocat: github':
+  - changed-files:
+    - any-glob-to-any-file:
+      - .github/**
+':package: package':
+  - changed-files:
+    - any-glob-to-any-file:
+      - composer.json
+      - composer.lock
+      - package.json
+      - package-lock.json
+      - yarn.lock
+':card_file_box: migration':
+  - changed-files:
+    - any-glob-to-any-file:
+      - database/migrations/*.php
 
 # Branch Patterns
 ':gem: feat':

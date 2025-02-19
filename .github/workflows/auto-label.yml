@@ -24,7 +24,7 @@ jobs:
       - name: Run Labeler
         uses: actions/labeler@v5
         with:
-          configuration-path: .github/configs/labeler.yml
+          configuration-path: .github/configs/labeler.yaml
           sync-labels: true
 
       - name: Create Draft Label
