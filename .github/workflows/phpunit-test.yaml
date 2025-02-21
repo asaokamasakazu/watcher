@@ -1,0 +1,95 @@
+name: PHPUnit Test
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  phpunit-test:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.4
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_DATABASE: watcher_testing
+          MYSQL_USER: watcher_user
+          MYSQL_PASSWORD: watcher_password
+          MYSQL_ROOT_PASSWORD: root
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    env:
+      APP_ENV: testing
+      DB_HOST: 127.0.0.1
+      DB_DATABASE: watcher_testing
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Copy .env
+        run: cp .env.example .env
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4.3"
+          extensions: intl, mbstring, pdo, pdo_mysql, xml, pcntl, bcmath
+          tools: composer
+          coverage: pcov
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache Composer
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Get Npm Cache Directory
+        id: npm-cache-dir
+        shell: bash
+        run: echo "dir=$(npm config get cache)" >> ${GITHUB_OUTPUT}
+
+      - name: Cache Npm
+        uses: actions/cache@v4
+        id: npm-cache
+        with:
+          path: ${{ steps.npm-cache-dir.outputs.dir }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install Composer Dependencies
+        run: composer install -q --no-ansi --no-interaction --optimize-autoloader --prefer-dist
+
+      - name: Install Assets
+        run: npm install
+
+      - name: Build Assets
+        run: npm run build
+
+      - name: Generate Key
+        run: php artisan key:generate
+
+      - name: Dump Autoload
+        run: composer dump-autoload
+
+      - name: Run Migrate
+        run: php artisan migrate
+
+      - name: Run Tests
+        run: php artisan test --coverage
