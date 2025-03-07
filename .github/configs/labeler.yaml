@@ -22,6 +22,11 @@
   - changed-files:
     - any-glob-to-any-file:
       - .github/**
+':whale2: docker':
+  - changed-files:
+      - any-glob-to-any-file:
+          - docker/**
+          - docker-compose.yaml
 ':package: package':
   - changed-files:
     - any-glob-to-any-file:
