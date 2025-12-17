@@ -1,0 +1,65 @@
+name: Pokemon LGTM
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  pokemon-poke:
+    runs-on: ubuntu-latest
+    # PRコメントで「poke」を含む場合のみ実行
+    if: >-
+      github.event.issue.pull_request &&
+      contains(github.event.comment.body, 'poke')
+
+    permissions:
+      pull-requests: write
+
+    steps:
+      - name: Fetch Random Pokemon and Post Comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const maxId = 1025;
+            const randomId = Math.floor(Math.random() * maxId) + 1;
+
+            // ポケモン基本情報を取得
+            const pokemonRes = await fetch(`https://pokeapi.co/api/v2/pokemon/${randomId}`);
+            if (!pokemonRes.ok) {
+              core.setFailed(`Failed to fetch Pokemon: ${pokemonRes.status}`);
+              return;
+            }
+            const pokemon = await pokemonRes.json();
+
+            // 日本語名を取得するためspeciesエンドポイントを呼ぶ
+            const speciesRes = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${randomId}`);
+            let japaneseName = pokemon.name;
+            if (speciesRes.ok) {
+              const species = await speciesRes.json();
+              const jpName = species.names.find(n => n.language.name === 'ja');
+              if (jpName) japaneseName = jpName.name;
+            }
+
+            const spriteUrl = pokemon.sprites.other['official-artwork'].front_default
+              || pokemon.sprites.front_default;
+            const types = pokemon.types.map(t => t.type.name).join(', ');
+
+            const commentBody = [
+              `## やせいの ${japaneseName}が あらわれた！`,
+              '',
+              `![${japaneseName}](${spriteUrl})`,
+              '',
+              `**図鑑No:** #${pokemon.id}`,
+              `**タイプ:** ${types}`,
+              '',
+              `> ${japaneseName}の LGTM！`
+            ].join('\n');
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: commentBody
+            });
+
+            core.info(`Posted ${japaneseName} (#${pokemon.id}) to PR #${context.issue.number}`);
