@@ -57,8 +57,8 @@ jobs:
             const commentBody = [
               `<img src="${spriteUrl}" alt="${japaneseName}" width="300">`,
               '',
-              `やせいの ${japaneseName}が あらわれた！`,
-              `${japaneseName}の LGTM！`,
+              `やせいの　${japaneseName}が　あらわれた！`,
+              `${japaneseName}の　LGTM！`,
               '',
               `図鑑No: ${pokemon.id}`,
               `タイプ: ${types}`,
