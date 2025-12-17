@@ -58,7 +58,7 @@ jobs:
               `<img src="${spriteUrl}" alt="${japaneseName}" width="200">`,
               '',
               `やせいの ${japaneseName}が あらわれた！`,
-              `${japaneseName}の LGTM！`
+              `${japaneseName}の LGTM！`,
               '',
               `図鑑No: ${pokemon.id}`,
               `タイプ: ${types}`,
