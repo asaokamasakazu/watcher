@@ -45,14 +45,13 @@ jobs:
             const types = pokemon.types.map(t => t.type.name).join(', ');
 
             const commentBody = [
-              `## やせいの ${japaneseName}が あらわれた！`,
+              `<img src="${spriteUrl}" alt="${japaneseName}" width="200">`,
               '',
-              `![${japaneseName}](${spriteUrl})`,
+              `やせいの ${japaneseName}が あらわれた！`,
+              `${japaneseName}の LGTM！`
               '',
-              `**図鑑No:** #${pokemon.id}`,
-              `**タイプ:** ${types}`,
-              '',
-              `> ${japaneseName}の LGTM！`
+              `図鑑No: ${pokemon.id}`,
+              `タイプ: ${types}`,
             ].join('\n');
 
             await github.rest.issues.createComment({
