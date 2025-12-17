@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  pokemon-poke:
+  pokemon-lgtm:
     runs-on: ubuntu-latest
     # PRコメントで「draw poke」を含む場合のみ実行
     if: >-
