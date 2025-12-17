@@ -3,14 +3,15 @@ name: Pokemon LGTM
 on:
   issue_comment:
     types: [created]
+  workflow_dispatch:
 
 jobs:
-  pokemon-poke:
+  pokemon-lgtm:
     runs-on: ubuntu-latest
-    # PRコメントで「poke」を含む場合のみ実行
+    # PRコメントで「draw poke」を含む場合のみ実行
     if: >-
       github.event.issue.pull_request &&
-      contains(github.event.comment.body, 'poke')
+      contains(github.event.comment.body, 'draw poke')
 
     permissions:
       pull-requests: write
@@ -42,17 +43,25 @@ jobs:
 
             const spriteUrl = pokemon.sprites.other['official-artwork'].front_default
               || pokemon.sprites.front_default;
-            const types = pokemon.types.map(t => t.type.name).join(', ');
+
+            // タイプの日本語マッピング
+            const typeMap = {
+              normal: 'ノーマル', fire: 'ほのお', water: 'みず', electric: 'でんき',
+              grass: 'くさ', ice: 'こおり', fighting: 'かくとう', poison: 'どく',
+              ground: 'じめん', flying: 'ひこう', psychic: 'エスパー', bug: 'むし',
+              rock: 'いわ', ghost: 'ゴースト', dragon: 'ドラゴン', dark: 'あく',
+              steel: 'はがね', fairy: 'フェアリー'
+            };
+            const types = pokemon.types.map(t => typeMap[t.type.name] || t.type.name).join(', ');
 
             const commentBody = [
-              `## やせいの ${japaneseName}が あらわれた！`,
+              `<img src="${spriteUrl}" alt="${japaneseName}" width="200">`,
               '',
-              `![${japaneseName}](${spriteUrl})`,
+              `やせいの ${japaneseName}が あらわれた！`,
+              `${japaneseName}の LGTM！`
               '',
-              `**図鑑No:** #${pokemon.id}`,
-              `**タイプ:** ${types}`,
-              '',
-              `> ${japaneseName}の LGTM！`
+              `図鑑No: ${pokemon.id}`,
+              `タイプ: ${types}`,
             ].join('\n');
 
             await github.rest.issues.createComment({
