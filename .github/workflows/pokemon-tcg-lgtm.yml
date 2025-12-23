@@ -41,23 +41,32 @@ jobs:
             // 1. セット一覧を取得
             core.info('Fetching sets...');
             const sets = await fetchWithRetry(`${BASE_URL}/sets`);
-            const randomSet = sets[Math.floor(Math.random() * sets.length)];
-            core.info(`Selected set: ${randomSet.name}`);
 
-            // 2. セット詳細（カード一覧含む）を取得
-            const setDetail = await fetchWithRetry(`${BASE_URL}/sets/${randomSet.id}`);
-            if (!setDetail.cards || setDetail.cards.length === 0) {
-              throw new Error('No cards in set');
+            // 2. カードがあるセットが見つかるまでリトライ
+            let card = null;
+            for (let attempt = 0; attempt < 10; attempt++) {
+              const randomSet = sets[Math.floor(Math.random() * sets.length)];
+              core.info(`Attempt ${attempt + 1}: Trying set ${randomSet.name}...`);
+
+              const setDetail = await fetchWithRetry(`${BASE_URL}/sets/${randomSet.id}`);
+              if (!setDetail.cards || setDetail.cards.length === 0) {
+                core.info('No cards in set, trying another...');
+                continue;
+              }
+
+              const randomCardInfo = setDetail.cards[Math.floor(Math.random() * setDetail.cards.length)];
+              core.info(`Fetching card: ${randomCardInfo.id}`);
+              card = await fetchWithRetry(`${BASE_URL}/cards/${randomCardInfo.id}`);
+              break;
             }
-            const randomCardInfo = setDetail.cards[Math.floor(Math.random() * setDetail.cards.length)];
 
-            // 3. カード詳細を取得
-            core.info(`Fetching card: ${randomCardInfo.id}`);
-            const card = await fetchWithRetry(`${BASE_URL}/cards/${randomCardInfo.id}`);
+            if (!card) {
+              throw new Error('Failed to find a card after 10 attempts');
+            }
 
             const cardName = card.name;
             const cardImage = card.image ? `${card.image}/high.webp` : '';
-            const setName = card.set?.name || randomSet.name || '不明';
+            const setName = card.set?.name || '不明';
             const rarity = card.rarity || '不明';
             const cardNumber = card.localId || '';
             const artist = card.illustrator || '不明';
