@@ -55,6 +55,7 @@ jobs:
 
             // 2. 画像付きカードが見つかるまでリトライ
             let card = null;
+            let setInfo = null;
             for (let attempt = 0; attempt < 30; attempt++) {
               const randomSet = allSets[Math.floor(Math.random() * allSets.length)];
               core.info(`Attempt ${attempt + 1}: ${randomSet.name}...`);
@@ -67,6 +68,7 @@ jobs:
               if (!fetchedCard?.image) continue;
 
               card = fetchedCard;
+              setInfo = setDetail;
               core.info(`Found: ${card.name}`);
               break;
             }
@@ -80,6 +82,7 @@ jobs:
             const setName = card.set?.name || '不明';
             const rarity = card.rarity || '不明';
             const dexId = card.dexId ? `No.${card.dexId}` : '-';
+            const releaseDate = setInfo?.releaseDate || '-';
 
             const commentBody = [
               `<img src="${cardImage}" alt="${cardName}" width="300">`,
@@ -92,6 +95,7 @@ jobs:
               `| 図鑑番号 | ${dexId} |`,
               `| セット | ${setName} |`,
               `| レアリティ | ${rarity} |`,
+              `| 発売日 | ${releaseDate} |`,
             ].join('\n');
 
             const prNumber = context.issue.number;
