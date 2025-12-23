@@ -81,6 +81,16 @@ jobs:
             const rarity = card.rarity || '不明';
             const cardNumber = card.localId || '';
             const artist = card.illustrator || '不明';
+            const category = card.category || '不明';
+            const dexId = card.dexId ? `No.${card.dexId}` : '-';
+            const hp = card.hp ? `${card.hp}` : '-';
+            const types = card.types?.join(', ') || '-';
+            const stage = card.stage || '-';
+            const abilities = card.abilities?.map(a => `${a.name}`).join(', ') || '-';
+            const attacks = card.attacks?.map(a => `${a.name}${a.damage ? ` (${a.damage})` : ''}`).join(', ') || '-';
+            const weaknesses = card.weaknesses?.map(w => `${w.type} ${w.value}`).join(', ') || '-';
+            const retreat = card.retreat !== undefined ? `${'●'.repeat(card.retreat)}` || '0' : '-';
+            const regulationMark = card.regulationMark || '-';
 
             const commentBody = [
               `<img src="${cardImage}" alt="${cardName}" width="300">`,
@@ -90,9 +100,19 @@ jobs:
               `| 項目 | 値 |`,
               `|------|-----|`,
               `| カード名 | ${cardName} |`,
+              `| カテゴリ | ${category} |`,
+              `| 図鑑番号 | ${dexId} |`,
+              `| HP | ${hp} |`,
+              `| タイプ | ${types} |`,
+              `| 進化段階 | ${stage} |`,
+              `| 特性 | ${abilities} |`,
+              `| ワザ | ${attacks} |`,
+              `| 弱点 | ${weaknesses} |`,
+              `| にげる | ${retreat} |`,
               `| セット | ${setName} |`,
               `| レアリティ | ${rarity} |`,
               `| カード番号 | ${cardNumber} |`,
+              `| レギュレーション | ${regulationMark} |`,
               `| イラストレーター | ${artist} |`,
             ].join('\n');
 
