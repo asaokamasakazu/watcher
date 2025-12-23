@@ -20,22 +20,31 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            // 総カード数を取得
-            const countRes = await fetch('https://api.pokemontcg.io/v2/cards?pageSize=1');
-            if (!countRes.ok) {
-              core.setFailed(`Failed to fetch card count: ${countRes.status}`);
-              return;
+            // リトライ付きfetch
+            async function fetchWithRetry(url, retries = 3) {
+              for (let i = 0; i < retries; i++) {
+                try {
+                  const res = await fetch(url);
+                  if (res.ok) return res;
+                  if (res.status !== 504 && res.status !== 503) {
+                    throw new Error(`HTTP ${res.status}`);
+                  }
+                  core.info(`Retry ${i + 1}/${retries} after ${res.status}...`);
+                } catch (e) {
+                  if (i === retries - 1) throw e;
+                  core.info(`Retry ${i + 1}/${retries} after error...`);
+                }
+                await new Promise(r => setTimeout(r, 2000));
+              }
+              throw new Error('Max retries exceeded');
             }
-            const countData = await countRes.json();
-            const totalCount = countData.totalCount;
+
+            // 総カード数は約19000枚（APIコール削減のため固定値を使用）
+            const totalCount = 19000;
+            const randomPage = Math.floor(Math.random() * totalCount) + 1;
 
             // ランダムなカードを取得
-            const randomPage = Math.floor(Math.random() * totalCount) + 1;
-            const cardRes = await fetch(`https://api.pokemontcg.io/v2/cards?page=${randomPage}&pageSize=1`);
-            if (!cardRes.ok) {
-              core.setFailed(`Failed to fetch card: ${cardRes.status}`);
-              return;
-            }
+            const cardRes = await fetchWithRetry(`https://api.pokemontcg.io/v2/cards?page=${randomPage}&pageSize=1`);
             const cardData = await cardRes.json();
 
             if (!cardData.data || cardData.data.length === 0) {
