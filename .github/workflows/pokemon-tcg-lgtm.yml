@@ -84,6 +84,14 @@ jobs:
             const releaseDate = setInfo?.releaseDate || '-';
 
             const commentBody = [
+              '```',
+              '┌────────────────────────────────┐',
+              '│                                │',
+              '│       ✨ LGTM ✨               │',
+              '│                                │',
+              '└────────────────────────────────┘',
+              '```',
+              '',
               `<img src="${cardImage}" alt="${cardName}" width="300">`,
               '',
               `**${cardName}** を　ドローした！`,
