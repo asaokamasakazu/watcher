@@ -56,12 +56,19 @@ jobs:
 
               const randomCardInfo = setDetail.cards[Math.floor(Math.random() * setDetail.cards.length)];
               core.info(`Fetching card: ${randomCardInfo.id}`);
-              card = await fetchWithRetry(`${BASE_URL}/cards/${randomCardInfo.id}`);
+              const fetchedCard = await fetchWithRetry(`${BASE_URL}/cards/${randomCardInfo.id}`);
+
+              if (!fetchedCard.image) {
+                core.info('No image for this card, trying another...');
+                continue;
+              }
+
+              card = fetchedCard;
               break;
             }
 
             if (!card) {
-              throw new Error('Failed to find a card after 10 attempts');
+              throw new Error('Failed to find a card with image after 10 attempts');
             }
 
             const cardName = card.name;
