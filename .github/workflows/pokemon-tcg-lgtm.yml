@@ -88,12 +88,12 @@ jobs:
               '',
               `**${cardName}** を　ドローした！`,
               '',
-              `| 項目 | 値 |`,
+              `| | |`,
               `|------|-----|`,
-              `| カード名 | ${cardName} |`,
-              `| 全国図鑑番号 | ${dexId} |`,
-              `| パック名 | ${setName} |`,
-              `| 発売日 | ${releaseDate} |`,
+              `| **カード名** | ${cardName} |`,
+              `| **全国図鑑番号** | ${dexId} |`,
+              `| **パック名** | ${setName} |`,
+              `| **発売日** | ${releaseDate} |`,
             ].join('\n');
 
             const prNumber = context.issue.number;
