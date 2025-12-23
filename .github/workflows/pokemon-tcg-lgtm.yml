@@ -84,11 +84,13 @@ jobs:
             const releaseDate = setInfo?.releaseDate || '-';
 
             const commentBody = [
+              '```', 
               '┌───────────────────────────┐',
               '│                           │',
               '│ ✧✧✧✧✧✧✧✧ L G T M ✧✧✧✧✧✧✧✧ │',
               '│                           │',
               '└───────────────────────────┘',
+              '```', 
               '',
               `<img src="${cardImage}" alt="${cardName}" width="300">`,
               '',
