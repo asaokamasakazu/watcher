@@ -20,63 +20,60 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            // TCGdex API を使用（日本語版）
-            const BASE_URL = 'https://api.tcgdex.net/v2/ja';
+            // TCGdex API（英語版でカード検索、日本語版で表示）
+            const EN_URL = 'https://api.tcgdex.net/v2/en';
+            const JA_URL = 'https://api.tcgdex.net/v2/ja';
 
-            // リトライ付きfetch
-            async function fetchWithRetry(url, maxRetries = 3) {
-              for (let i = 0; i < maxRetries; i++) {
-                try {
-                  const res = await fetch(url);
-                  if (res.ok) return await res.json();
-                  core.info(`HTTP ${res.status}, retrying...`);
-                } catch (e) {
-                  core.info(`Error: ${e.message}, retrying...`);
-                }
-                await new Promise(r => setTimeout(r, 2000));
+            // fetch（404はnullを返す）
+            async function fetchJson(url) {
+              try {
+                const res = await fetch(url);
+                if (res.ok) return await res.json();
+                return null;
+              } catch (e) {
+                return null;
               }
-              throw new Error(`Failed to fetch: ${url}`);
             }
 
-            // 1. セット一覧を取得
+            // 1. 英語版でセット一覧を取得（データが豊富）
             core.info('Fetching sets...');
-            const sets = await fetchWithRetry(`${BASE_URL}/sets`);
+            const sets = await fetchJson(`${EN_URL}/sets`);
+            if (!sets) throw new Error('Failed to fetch sets');
 
-            // 2. カードがあるセットが見つかるまでリトライ
-            let card = null;
-            for (let attempt = 0; attempt < 10; attempt++) {
+            // 2. 画像付きカードが見つかるまでリトライ
+            let enCard = null;
+            let jaCard = null;
+            for (let attempt = 0; attempt < 30; attempt++) {
               const randomSet = sets[Math.floor(Math.random() * sets.length)];
-              core.info(`Attempt ${attempt + 1}: Trying set ${randomSet.name}...`);
+              core.info(`Attempt ${attempt + 1}: ${randomSet.name}...`);
 
-              const setDetail = await fetchWithRetry(`${BASE_URL}/sets/${randomSet.id}`);
-              if (!setDetail.cards || setDetail.cards.length === 0) {
-                core.info('No cards in set, trying another...');
-                continue;
-              }
+              const setDetail = await fetchJson(`${EN_URL}/sets/${randomSet.id}`);
+              if (!setDetail?.cards?.length) continue;
 
               const randomCardInfo = setDetail.cards[Math.floor(Math.random() * setDetail.cards.length)];
-              core.info(`Fetching card: ${randomCardInfo.id}`);
-              const fetchedCard = await fetchWithRetry(`${BASE_URL}/cards/${randomCardInfo.id}`);
+              const fetchedCard = await fetchJson(`${EN_URL}/cards/${randomCardInfo.id}`);
+              if (!fetchedCard?.image) continue;
 
-              if (!fetchedCard.image) {
-                core.info('No image for this card, trying another...');
-                continue;
-              }
+              // 日本語版を取得
+              const jaFetched = await fetchJson(`${JA_URL}/cards/${randomCardInfo.id}`);
 
-              card = fetchedCard;
+              enCard = fetchedCard;
+              jaCard = jaFetched;
+              core.info(`Found: ${fetchedCard.name} (JA: ${jaFetched?.name || 'N/A'})`);
               break;
             }
 
-            if (!card) {
-              throw new Error('Failed to find a card with image after 10 attempts');
+            if (!enCard) {
+              throw new Error('Failed to find a card with image');
             }
 
-            const cardName = card.name;
-            const cardImage = card.image ? `${card.image}/high.webp` : '';
-            const setName = card.set?.name || '不明';
-            const rarity = card.rarity || '不明';
-            const cardNumber = card.localId || '';
-            const artist = card.illustrator || '不明';
+            // 日本語版があれば日本語、なければ英語
+            const cardName = jaCard?.name || enCard.name;
+            const cardImage = `${enCard.image}/high.webp`;
+            const setName = jaCard?.set?.name || enCard.set?.name || '不明';
+            const rarity = jaCard?.rarity || enCard.rarity || '不明';
+            const cardNumber = enCard.localId || '';
+            const artist = enCard.illustrator || '不明';
 
             const commentBody = [
               `<img src="${cardImage}" alt="${cardName}" width="300">`,
