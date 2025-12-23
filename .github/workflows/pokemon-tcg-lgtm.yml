@@ -23,8 +23,8 @@ jobs:
             // TCGdex API（日本語版を使用、直近のシリーズに限定）
             const JA_URL = 'https://api.tcgdex.net/v2/ja';
 
-            // 対象シリーズ（直近4年: Sword & Shield + Scarlet & Violet）
-            const TARGET_SERIES = ['s', 'sv'];
+            // 対象シリーズ（Sun & Moon + Sword & Shield + Scarlet & Violet）
+            const TARGET_SERIES = ['sm', 's', 'sv'];
 
             // fetch（404はnullを返す）
             async function fetchJson(url) {
