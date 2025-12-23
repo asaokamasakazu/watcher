@@ -20,52 +20,47 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            // 人気セットのリスト（レスポンスサイズを小さくするため）
-            const SETS = [
-              'base1', 'base2', 'base3', 'base4', 'base5', 'base6',
-              'gym1', 'gym2', 'neo1', 'neo2', 'neo3', 'neo4',
-              'xy1', 'xy2', 'xy3', 'xy4', 'xy5', 'xy6', 'xy7',
-              'sm1', 'sm2', 'sm3', 'sm4', 'sm5', 'sm6', 'sm7', 'sm8', 'sm9', 'sm10', 'sm11', 'sm12',
-              'swsh1', 'swsh2', 'swsh3', 'swsh4', 'swsh5', 'swsh6', 'swsh7', 'swsh8', 'swsh9', 'swsh10', 'swsh11', 'swsh12',
-              'sv1', 'sv2', 'sv3', 'sv4', 'sv5', 'sv6'
-            ];
+            // TCGdex API を使用（より安定）
+            const BASE_URL = 'https://api.tcgdex.net/v2/en';
 
-            // リトライ付きでランダムカードを取得
-            async function fetchRandomCard(maxRetries = 10) {
+            // リトライ付きfetch
+            async function fetchWithRetry(url, maxRetries = 3) {
               for (let i = 0; i < maxRetries; i++) {
                 try {
-                  const randomSet = SETS[Math.floor(Math.random() * SETS.length)];
-                  const url = `https://api.pokemontcg.io/v2/cards?q=set.id:${randomSet}&pageSize=50`;
-                  core.info(`Attempt ${i + 1}: Fetching from set ${randomSet}...`);
-
                   const res = await fetch(url);
-                  if (!res.ok) {
-                    core.info(`HTTP ${res.status}, retrying in 3s...`);
-                    await new Promise(r => setTimeout(r, 3000));
-                    continue;
-                  }
-
-                  const data = await res.json();
-                  if (data.data && data.data.length > 0) {
-                    const randomIndex = Math.floor(Math.random() * data.data.length);
-                    return data.data[randomIndex];
-                  }
+                  if (res.ok) return await res.json();
+                  core.info(`HTTP ${res.status}, retrying...`);
                 } catch (e) {
-                  core.info(`Error: ${e.message}, retrying in 3s...`);
-                  await new Promise(r => setTimeout(r, 3000));
+                  core.info(`Error: ${e.message}, retrying...`);
                 }
+                await new Promise(r => setTimeout(r, 2000));
               }
-              throw new Error('Failed to fetch card after max retries');
+              throw new Error(`Failed to fetch: ${url}`);
             }
 
-            const card = await fetchRandomCard();
+            // 1. セット一覧を取得
+            core.info('Fetching sets...');
+            const sets = await fetchWithRetry(`${BASE_URL}/sets`);
+            const randomSet = sets[Math.floor(Math.random() * sets.length)];
+            core.info(`Selected set: ${randomSet.name}`);
+
+            // 2. セット詳細（カード一覧含む）を取得
+            const setDetail = await fetchWithRetry(`${BASE_URL}/sets/${randomSet.id}`);
+            if (!setDetail.cards || setDetail.cards.length === 0) {
+              throw new Error('No cards in set');
+            }
+            const randomCardInfo = setDetail.cards[Math.floor(Math.random() * setDetail.cards.length)];
+
+            // 3. カード詳細を取得
+            core.info(`Fetching card: ${randomCardInfo.id}`);
+            const card = await fetchWithRetry(`${BASE_URL}/cards/${randomCardInfo.id}`);
+
             const cardName = card.name;
-            const cardImage = card.images.large || card.images.small;
-            const setName = card.set?.name || '不明';
-            const seriesName = card.set?.series || '';
+            const cardImage = card.image ? `${card.image}/high.webp` : '';
+            const setName = card.set?.name || randomSet.name || '不明';
             const rarity = card.rarity || '不明';
-            const cardNumber = card.number || '';
-            const artist = card.artist || '不明';
+            const cardNumber = card.localId || '';
+            const artist = card.illustrator || '不明';
 
             const commentBody = [
               `<img src="${cardImage}" alt="${cardName}" width="300">`,
@@ -75,7 +70,6 @@ jobs:
               `| 項目 | 値 |`,
               `|------|-----|`,
               `| カード名 | ${cardName} |`,
-              `| シリーズ | ${seriesName} |`,
               `| セット | ${setName} |`,
               `| レアリティ | ${rarity} |`,
               `| カード番号 | ${cardNumber} |`,
