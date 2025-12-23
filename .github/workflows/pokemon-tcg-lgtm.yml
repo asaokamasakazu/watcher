@@ -20,9 +20,11 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            // TCGdex API（英語版でカード検索、日本語版で表示）
-            const EN_URL = 'https://api.tcgdex.net/v2/en';
+            // TCGdex API（日本語版を使用、直近のシリーズに限定）
             const JA_URL = 'https://api.tcgdex.net/v2/ja';
+
+            // 対象シリーズ（直近4年: Sword & Shield + Scarlet & Violet）
+            const TARGET_SERIES = ['s', 'sv'];
 
             // fetch（404はnullを返す）
             async function fetchJson(url) {
@@ -35,45 +37,50 @@ jobs:
               }
             }
 
-            // 1. 英語版でセット一覧を取得（データが豊富）
-            core.info('Fetching sets...');
-            const sets = await fetchJson(`${EN_URL}/sets`);
-            if (!sets) throw new Error('Failed to fetch sets');
+            // 1. 対象シリーズのセット一覧を取得
+            core.info('Fetching series...');
+            let allSets = [];
+            for (const seriesId of TARGET_SERIES) {
+              const series = await fetchJson(`${JA_URL}/series/${seriesId}`);
+              if (series?.sets) {
+                allSets = allSets.concat(series.sets);
+                core.info(`${seriesId}: ${series.sets.length} sets`);
+              }
+            }
+
+            if (allSets.length === 0) {
+              throw new Error('Failed to fetch sets');
+            }
+            core.info(`Total sets: ${allSets.length}`);
 
             // 2. 画像付きカードが見つかるまでリトライ
-            let enCard = null;
-            let jaCard = null;
+            let card = null;
             for (let attempt = 0; attempt < 30; attempt++) {
-              const randomSet = sets[Math.floor(Math.random() * sets.length)];
+              const randomSet = allSets[Math.floor(Math.random() * allSets.length)];
               core.info(`Attempt ${attempt + 1}: ${randomSet.name}...`);
 
-              const setDetail = await fetchJson(`${EN_URL}/sets/${randomSet.id}`);
+              const setDetail = await fetchJson(`${JA_URL}/sets/${randomSet.id}`);
               if (!setDetail?.cards?.length) continue;
 
               const randomCardInfo = setDetail.cards[Math.floor(Math.random() * setDetail.cards.length)];
-              const fetchedCard = await fetchJson(`${EN_URL}/cards/${randomCardInfo.id}`);
+              const fetchedCard = await fetchJson(`${JA_URL}/cards/${randomCardInfo.id}`);
               if (!fetchedCard?.image) continue;
 
-              // 日本語版を取得
-              const jaFetched = await fetchJson(`${JA_URL}/cards/${randomCardInfo.id}`);
-
-              enCard = fetchedCard;
-              jaCard = jaFetched;
-              core.info(`Found: ${fetchedCard.name} (JA: ${jaFetched?.name || 'N/A'})`);
+              card = fetchedCard;
+              core.info(`Found: ${card.name}`);
               break;
             }
 
-            if (!enCard) {
+            if (!card) {
               throw new Error('Failed to find a card with image');
             }
 
-            // 日本語版があれば日本語、なければ英語
-            const cardName = jaCard?.name || enCard.name;
-            const cardImage = `${enCard.image}/high.webp`;
-            const setName = jaCard?.set?.name || enCard.set?.name || '不明';
-            const rarity = jaCard?.rarity || enCard.rarity || '不明';
-            const cardNumber = enCard.localId || '';
-            const artist = enCard.illustrator || '不明';
+            const cardName = card.name;
+            const cardImage = `${card.image}/high.webp`;
+            const setName = card.set?.name || '不明';
+            const rarity = card.rarity || '不明';
+            const cardNumber = card.localId || '';
+            const artist = card.illustrator || '不明';
 
             const commentBody = [
               `<img src="${cardImage}" alt="${cardName}" width="300">`,
