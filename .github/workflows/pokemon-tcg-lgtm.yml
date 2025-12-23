@@ -1,18 +1,16 @@
 name: Pokemon TCG LGTM
 
 on:
-  pull_request_review:
-    types: [submitted]
-  workflow_dispatch:
+  issue_comment:
+    types: [created]
 
 jobs:
   pokemon-tcg-lgtm:
     runs-on: ubuntu-latest
-    # approve時のコメントに「draw pokeca」を含む場合のみ実行
-    if: contains(github.event.review.body, 'draw pokeca')
-#    if: >-
-#      github.event.review.state == 'approved' &&
-#      contains(github.event.review.body, 'draw pokeca')
+    # PRコメントに「draw pokeca」を含む場合のみ実行
+    if: >-
+      github.event.issue.pull_request &&
+      contains(github.event.comment.body, 'draw pokeca')
 
     permissions:
       pull-requests: write
@@ -69,7 +67,7 @@ jobs:
               `| イラストレーター | ${artist} |`,
             ].join('\n');
 
-            const prNumber = context.payload.pull_request.number;
+            const prNumber = context.issue.number;
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,
