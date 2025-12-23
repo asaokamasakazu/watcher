@@ -26,6 +26,23 @@ jobs:
             // 対象シリーズ（Sun & Moon + Sword & Shield + Scarlet & Violet）
             const TARGET_SERIES = ['sm', 's', 'sv'];
 
+            // レアリティの日本語マッピング
+            const rarityMap = {
+              'Common': 'コモン (C)',
+              'Uncommon': 'アンコモン (U)',
+              'Rare': 'レア (R)',
+              'Holo Rare': 'ホロレア',
+              'Double rare': 'ダブルレア (RR)',
+              'Ultra Rare': 'ウルトラレア (UR)',
+              'Hyper Rare': 'ハイパーレア (HR)',
+              'Secret Rare': 'シークレットレア (SR)',
+              'Special illustration rare': 'スペシャルアートレア (SAR)',
+              'Illustration rare': 'アートレア (AR)',
+              'Shiny rare': 'シャイニーレア',
+              'Black White Rare': 'ビーダブリューレア（BWR）',
+              'None': '-',
+            };
+
             // fetch（404はnullを返す）
             async function fetchJson(url) {
               try {
@@ -80,7 +97,7 @@ jobs:
             const cardName = card.name;
             const cardImage = `${card.image}/high.webp`;
             const setName = card.set?.name || '不明';
-            const rarity = card.rarity || '不明';
+            const rarity = rarityMap[card.rarity] || card.rarity || '不明';
             const dexId = card.dexId ? `No.${card.dexId}` : '-';
             const releaseDate = setInfo?.releaseDate || '-';
 
