@@ -1,0 +1,80 @@
+name: Pokemon TCG LGTM
+
+on:
+  pull_request_review:
+    types: [submitted]
+  workflow_dispatch:
+
+jobs:
+  pokemon-tcg-lgtm:
+    runs-on: ubuntu-latest
+    # approve時のコメントに「draw pokeca」を含む場合のみ実行
+    if: >-
+      github.event.review.state == 'approved' &&
+      contains(github.event.review.body, 'draw pokeca')
+
+    permissions:
+      pull-requests: write
+
+    steps:
+      - name: Fetch Random Pokemon TCG Card and Post Comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // 総カード数を取得
+            const countRes = await fetch('https://api.pokemontcg.io/v2/cards?pageSize=1');
+            if (!countRes.ok) {
+              core.setFailed(`Failed to fetch card count: ${countRes.status}`);
+              return;
+            }
+            const countData = await countRes.json();
+            const totalCount = countData.totalCount;
+
+            // ランダムなカードを取得
+            const randomPage = Math.floor(Math.random() * totalCount) + 1;
+            const cardRes = await fetch(`https://api.pokemontcg.io/v2/cards?page=${randomPage}&pageSize=1`);
+            if (!cardRes.ok) {
+              core.setFailed(`Failed to fetch card: ${cardRes.status}`);
+              return;
+            }
+            const cardData = await cardRes.json();
+
+            if (!cardData.data || cardData.data.length === 0) {
+              core.setFailed('No card data returned');
+              return;
+            }
+
+            const card = cardData.data[0];
+            const cardName = card.name;
+            const cardImage = card.images.large || card.images.small;
+            const setName = card.set?.name || '不明';
+            const seriesName = card.set?.series || '';
+            const rarity = card.rarity || '不明';
+            const cardNumber = card.number || '';
+            const artist = card.artist || '不明';
+
+            const commentBody = [
+              `<img src="${cardImage}" alt="${cardName}" width="300">`,
+              '',
+              `**${cardName}** を　ドローした！`,
+              '',
+              `| 項目 | 値 |`,
+              `|------|-----|`,
+              `| カード名 | ${cardName} |`,
+              `| シリーズ | ${seriesName} |`,
+              `| セット | ${setName} |`,
+              `| レアリティ | ${rarity} |`,
+              `| カード番号 | ${cardNumber} |`,
+              `| イラストレーター | ${artist} |`,
+            ].join('\n');
+
+            const prNumber = context.payload.pull_request.number;
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              body: commentBody
+            });
+
+            core.info(`Posted ${cardName} from ${setName} to PR #${prNumber}`);
