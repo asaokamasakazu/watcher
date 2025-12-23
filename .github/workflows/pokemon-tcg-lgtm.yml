@@ -20,8 +20,8 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            // TCGdex API を使用（より安定）
-            const BASE_URL = 'https://api.tcgdex.net/v2/en';
+            // TCGdex API を使用（日本語版）
+            const BASE_URL = 'https://api.tcgdex.net/v2/ja';
 
             // リトライ付きfetch
             async function fetchWithRetry(url, maxRetries = 3) {
