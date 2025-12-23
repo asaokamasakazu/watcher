@@ -23,8 +23,8 @@ jobs:
             // TCGdex API（日本語版を使用、直近のシリーズに限定）
             const JA_URL = 'https://api.tcgdex.net/v2/ja';
 
-            // 対象シリーズ（Sun & Moon + Sword & Shield + Scarlet & Violet）
-            const TARGET_SERIES = ['sm', 's', 'sv'];
+            // 対象シリーズ（Sword & Shield + Scarlet & Violet）
+            const TARGET_SERIES = ['s', 'sv'];
 
             // レアリティの日本語マッピング
             const rarityMap = {
@@ -34,10 +34,15 @@ jobs:
               'Holo Rare': 'ホロレア',
               'Double rare': 'ダブルレア (RR)',
               'Ultra Rare': 'ウルトラレア (UR)',
+              'UR': 'ウルトラレア (UR)',
               'Hyper Rare': 'ハイパーレア (HR)',
+              'HR': 'ハイパーレア (HR)',
               'Secret Rare': 'シークレットレア (SR)',
+              'SR': 'シークレットレア (SR)',
               'Special illustration rare': 'スペシャルアートレア (SAR)',
+              'SAR': 'スペシャルアートレア (SAR)',
               'Illustration rare': 'アートレア (AR)',
+              'AR': 'アートレア (AR)',
               'Shiny rare': 'シャイニーレア',
               'Black White Rare': 'ビーダブリューレア（BWR）',
               'None': '-',
