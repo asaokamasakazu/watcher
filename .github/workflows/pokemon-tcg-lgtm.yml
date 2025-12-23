@@ -9,9 +9,10 @@ jobs:
   pokemon-tcg-lgtm:
     runs-on: ubuntu-latest
     # approve時のコメントに「draw pokeca」を含む場合のみ実行
-    if: >-
-      github.event.review.state == 'approved' &&
-      contains(github.event.review.body, 'draw pokeca')
+    if: contains(github.event.review.body, 'draw pokeca')
+#    if: >-
+#      github.event.review.state == 'approved' &&
+#      contains(github.event.review.body, 'draw pokeca')
 
     permissions:
       pull-requests: write
