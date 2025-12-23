@@ -20,31 +20,39 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
+            // 人気セットのリスト（レスポンスサイズを小さくするため）
+            const SETS = [
+              'base1', 'base2', 'base3', 'base4', 'base5', 'base6',
+              'gym1', 'gym2', 'neo1', 'neo2', 'neo3', 'neo4',
+              'xy1', 'xy2', 'xy3', 'xy4', 'xy5', 'xy6', 'xy7',
+              'sm1', 'sm2', 'sm3', 'sm4', 'sm5', 'sm6', 'sm7', 'sm8', 'sm9', 'sm10', 'sm11', 'sm12',
+              'swsh1', 'swsh2', 'swsh3', 'swsh4', 'swsh5', 'swsh6', 'swsh7', 'swsh8', 'swsh9', 'swsh10', 'swsh11', 'swsh12',
+              'sv1', 'sv2', 'sv3', 'sv4', 'sv5', 'sv6'
+            ];
+
             // リトライ付きでランダムカードを取得
-            async function fetchRandomCard(maxRetries = 5) {
+            async function fetchRandomCard(maxRetries = 10) {
               for (let i = 0; i < maxRetries; i++) {
                 try {
-                  // pageSize=250でランダムなページを取得（総ページ数は約76）
-                  const randomPage = Math.floor(Math.random() * 76) + 1;
-                  const url = `https://api.pokemontcg.io/v2/cards?page=${randomPage}&pageSize=250`;
-                  core.info(`Fetching page ${randomPage}...`);
+                  const randomSet = SETS[Math.floor(Math.random() * SETS.length)];
+                  const url = `https://api.pokemontcg.io/v2/cards?q=set.id:${randomSet}&pageSize=50`;
+                  core.info(`Attempt ${i + 1}: Fetching from set ${randomSet}...`);
 
                   const res = await fetch(url);
                   if (!res.ok) {
-                    core.info(`Retry ${i + 1}/${maxRetries}: HTTP ${res.status}`);
-                    await new Promise(r => setTimeout(r, 2000));
+                    core.info(`HTTP ${res.status}, retrying in 3s...`);
+                    await new Promise(r => setTimeout(r, 3000));
                     continue;
                   }
 
                   const data = await res.json();
                   if (data.data && data.data.length > 0) {
-                    // ページ内からランダムに1枚選ぶ
                     const randomIndex = Math.floor(Math.random() * data.data.length);
                     return data.data[randomIndex];
                   }
                 } catch (e) {
-                  core.info(`Retry ${i + 1}/${maxRetries}: ${e.message}`);
-                  await new Promise(r => setTimeout(r, 2000));
+                  core.info(`Error: ${e.message}, retrying in 3s...`);
+                  await new Promise(r => setTimeout(r, 3000));
                 }
               }
               throw new Error('Failed to fetch card after max retries');
